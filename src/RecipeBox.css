@@ -1,0 +1,26 @@
+.recipeBox {
+	width: 40%;
+	height:100%;
+	margin: 0 auto;
+	background-color: lightgrey;
+}
+@media screen and (max-width: 750px) { 
+	.recipeBox {width: 100%;} 
+}
+.panel-title {
+	text-align:left;
+}
+.list-group-item {
+	text-align:left;
+}
+.panel-footer {
+	text-align:left;
+}
+.valSpan {
+	height:5px;
+	width:5px;
+	display: inline-block;
+	margin: 0 auto;
+	margin-left:5px;
+	border: 1px solid black
+}
