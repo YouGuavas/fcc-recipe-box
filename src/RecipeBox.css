@@ -3,6 +3,9 @@
 	height:100%;
 	margin: 0 auto;
 	background-color: lightgrey;
+	padding:3px;
+	padding-bottom:7px;
+	border-radius:1%;
 }
 @media screen and (max-width: 750px) { 
 	.recipeBox {width: 100%;} 
@@ -22,5 +25,5 @@
 	display: inline-block;
 	margin: 0 auto;
 	margin-left:5px;
-	border: 1px solid black
+	border-radius: 100%;
 }

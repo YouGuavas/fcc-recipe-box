@@ -3,7 +3,7 @@ import './RecipeBox.css';
 import { Panel, PanelGroup, ListGroup, ListGroupItem, Modal, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 
 
-let recipes = (typeof localStorage.recipeBook != "undefined" ? JSON.parse(localStorage['recipeBook']) : [
+let recipes = (typeof localStorage.recipeBook !== "undefined" ? JSON.parse(localStorage['recipeBook']) : [
 {title:"Chocolate Chip Cookies", ingredients: ["Eggs", "Butter", "Sugar", "Brown Sugar", "Flour", "Baking Soda", "Vanilla", "Chocolate Chips"]},
 {title:"Salmon Burgers", ingredients:["Eggs", "Salmon", "Flour"]}
 ]);
@@ -31,7 +31,8 @@ export class RecipeBox extends Component {
 			recipes.map(element => { if(data.oldTitle === element.title) {
 					recipes.splice(recipes.indexOf(element), 1, {title:data.title, ingredients:b})
 				};
-			})
+				return null;
+			});
 			localStorage.setItem("recipeBook", JSON.stringify(recipes));
 			this.setState({recipes:recipes, data: {title:'', ingredients:'', type:'Submit'}});
 			this.handleClose();
@@ -41,6 +42,7 @@ export class RecipeBox extends Component {
 		recipes.map(element => {if(a === element.title) {
 			recipes.splice(recipes.indexOf(element), 1)
 			}
+			return null;
 		});
 		this.setState({recipes:recipes});
 		localStorage.setItem("recipeBook", JSON.stringify(recipes));
@@ -51,6 +53,7 @@ export class RecipeBox extends Component {
 				let data = {title: element.title, ingredients: element.ingredients, type:'Edit'}
 				this.handleShow(data);
 			}
+			return null;
 		});
 	}
 	constructor(props) {
@@ -104,40 +107,62 @@ class Book extends Component {
 class ModalR extends Component {
 	constructor(props) {super(props);this.state = {
 			data:{title: this.props.handlers.data.title, ingredients: this.props.handlers.data.ingredients, oldTitle:this.props.handlers.data.oldTitle, type:this.props.handlers.data.type },
-			validationT: {status:null, color:'white'},
-			validationI: {status:null, color:'white'}
+			validationT: {status:null, color:'red'},
+			validationI: {status:null, color:'red'}
 		};
 		this.handleChange = this.handleChange.bind(this);this.getValidation = this.getValidation.bind(this);this.resetState = this.resetState.bind(this);
 	}
 
 	getValidation(a) {
 		if (a === 'recipe') {
-			if (this.state.data.title.length >= 3) {
+			if (this.state.data.title.length > 2) {
 				this.setState({
 					validationT: {status: true, color:'green'}
-				})} else {this.setState({
-					validationT: {status:null, color:'red'}})}} else {
+				});
+			} else {this.setState({
+					validationT: {status:null, color:'red'}
+				});
+		}} else {
 				if (this.state.data.ingredients.length > 0) {
 					this.setState({
 						validationI: {status:true, color:'green'}
-					})} else {
+					});
+				} else {
 					this.setState({
-						validationI: {status: null, color: 'red'}})}}}
+						validationI: {status: null, color: 'red'}
+					});
+				}}}
 
 	handleChange(e) {
 		if (e.target.title === 'recipe') {
 			this.setState({
 				data: {title:e.target.value, ingredients:this.state.data.ingredients}
-			});} else {
-			const ing = e.target.value.replace(/([, ]+)[ ,]+/g, ',').split(',');
-			this.setState({data: {title:this.state.data.title, ingredients:ing}});}
-		this.getValidation(e.target.title);
+			}, () => {
+				this.getValidation('recipe');
+			});
+		} else {
+			let ing = e.target.value.replace(/([, ]+)[ ,]+/g, ',')
+			if (ing.length > 0) { 
+				ing = ing.split(',');
+				this.setState({
+					data: {title:this.state.data.title, ingredients:ing}
+				},() => {
+				this.getValidation('ingredients');
+			});
+			} else {
+					this.setState({
+						data: {title:this.state.data.title, ingredients:[]}
+					},() => {
+					this.getValidation('ingredients');
+				});
+			}
+		}
 	}
 	resetState() {
 		this.setState({
 			data:{title:'', ingredients:[], type:'Submit'}, 
-			validationI:{status:null, color:'white'}, 
-			validationT:{status:null, color:'white'}
+			validationI:{status:null, color:'red'}, 
+			validationT:{status:null, color:'red'}
 		})
 	}
 
